@@ -28,41 +28,87 @@ Noteworthy dependencies:
 """
 
 
+import serial
+import serial.tools.list_ports
 
-
-
+SerialPort : serial
 
 def init(verbose = False):
+    global SerialPort
+    if verbose: 
+        print("STxUSB started, searching port:")
     
-def reset_device_00():
+    ports = serial.tools.list_ports.comports()                          #gets all ports
+    for aPort in ports: 
+        print("found: " + str(aPort.device) + " " + str(aPort.hwid))    #show found portnames and device information
 
-def start_counter_01():
+    ports = serial.tools.list_ports.grep("0403:6001")                       #searches for a devise with name, vid,pid containing the argument
 
-def stop_counter_02():
+    no_device_halt = True                                                   #if no port is found, then halt the program
 
-def request_status_03():
+    for aPort in ports:
+        no_device_halt = False                                              #port is found, so don't halt
+        if verbose: 
+            print("found: " + str(aPort.device) + " " + str(aPort.hwid))    #show found portnames and device information
 
-def request_counts_04():
+    if no_device_halt == False:
+        print("Device not found, check connection, and try again.")         #show error message and halt
+        exit()
+                 
+                                                                            #get serial object to start communicating with last aPort found
+    SerialPort = serial(port = aPort.device, baudrate = 115200, bytesize = 8, parity = "N", stopbits = 1,timeout = None, xonxoff = False, rtscts = False, write_timeout = None, dsrdtr = False, inter_byte_timeout = None, exclusive = None)
 
-def request_parameters_05():
 
-def request_system_parameters_06():
+def send_command(command :str) -> str:
+    global SerialPort
+    senddata = ">" + command + "\r"
+    SerialPort.write(senddata.encode('ascii','ignore'))
+    return SerialPort.readline() #.decode('Ascii')) # Print the contents of the serial data
 
-def store_current_parameters_07():
+def reset_device_00() -> str:
+    return send_command("00")
 
-def start_demo_counter_08():
+def start_counter_01() -> str:
+    return send_command("01")
 
-def high_voltage_on_12():
+def stop_counter_02() -> str:
+    return send_command("02")
 
-def high_voltage_off_13():
+def request_status_03() -> str:
+    return send_command("03")
 
-def high_voltage_onewire_on_14():
+def request_counts_04() -> str:
+    return send_command("04")
 
-def high_voltage_onewire_off_15():
+def request_parameters_05() -> str:
+    return send_command("05")
 
-def request_high_voltage_status_16():
+def request_system_parameters_06() -> str:
+    return send_command("06")
 
-def read_high_voltage_data_17():
+def store_current_parameters_07() -> str:
+    return send_command("07")
+
+def start_demo_counter_08() -> str:
+    return send_command("08")
+
+def high_voltage_on_12() -> str:
+    return send_command("12")
+
+def high_voltage_off_13() -> str:
+    return send_command("13")
+
+def high_voltage_onewire_on_14() -> str:
+    return send_command("14")
+
+def high_voltage_onewire_off_15() -> str:
+    return send_command("15")
+
+def request_high_voltage_status_16() -> str:
+    return send_command("16")
+
+def read_high_voltage_data_17() -> str:
+    return send_command("17")
 
 
 

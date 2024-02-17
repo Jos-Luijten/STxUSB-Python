@@ -150,28 +150,7 @@ if len(sys.argv) > 1:
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #Step 3: prepere serial port connection by searching for connected USB devise wid PID and VID equal to the ST365 radiation counter
 
-if verbose: 
-    print("STxUSB started, searching port:")
-    ports = serial.tools.list_ports.comports()                          #gets all ports
-    for aPort in ports: 
-        print("found: " + str(aPort.device) + " " + str(aPort.hwid))    #show found portnames and device information
-
-
-ports = serial.tools.list_ports.grep("0403:6001")                       #searches for a devise with name, vid,pid containing the argument
-
-no_device_halt = True                                                   #if no port is found, then halt the program
-for aPort in ports:
-    no_device_halt = False                                              #port is found, so don't halt
-    if verbose: 
-        print("found: " + str(aPort.device) + " " + str(aPort.hwid))    #show found portnames and device information
-
-if no_device_halt:
-    print("Device not found, check connection, and try again.")         #show error message and halt
-    exit()
-                                                                        #get serial object to start communicating with last aPort found
-SerialPort = serial.Serial(port = aPort.device, baudrate = 115200, bytesize = 8, parity = "N", stopbits = 1,timeout = None, xonxoff = False, rtscts = False, write_timeout = None, dsrdtr = False, inter_byte_timeout = None, exclusive = None)
-
-
+STxRadiationCounter.init(verbose)
 
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -196,20 +175,5 @@ for command in commands:
     if command == "-17": print(STxRadiationCounter.read_high_voltage_data_17())
     
 
-
-
-while("exit" not in command.lower()):
-    
-    if(SerialPort.in_waiting > 0): # check if buffer contains data
-
-        SerialString = SerialPort.readline() # Read data out of the buffer until a carraige return / new line is found
-
-        
-        print(SerialString)#.decode('Ascii')) # Print the contents of the serial data
-
-        # Tell the device connected over the serial port that we recevied the data!
-        # The b at the beginning is used to indicate bytes!
-        #SerialPort.write(b"Thank you for sending data \r\n")
-    input(command)
 
 
