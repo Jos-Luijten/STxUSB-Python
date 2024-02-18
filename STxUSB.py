@@ -26,7 +26,6 @@ Noteworthy dependencies:
 """
 
 
-import serial.tools.list_ports
 import sys
 import STxRadiationCounter
 
@@ -94,7 +93,7 @@ unknown_arguments = []                                                  #List of
 
 for argument in sys.argv[1:]:                                           #Skip first argument, and check others to recognize, or store given commands / arguments
     argument = argument.lower()
-    if argument == "-v" or "-verbose":
+    if argument == "-v" or argument == "-verbose":
         verbose = True
     elif argument == "-?" or argument == "-h" or argument == "-help" or argument == "-info" or argument == "/help" or argument == "/?" or argument == "/h" or argument == "?" or argument == "help":
         ShowHelp()
@@ -116,7 +115,6 @@ for argument in sys.argv[1:]:                                           #Skip fi
         commands.append("-07")
     elif argument == "-08" or argument == "-demo":
         commands.append("-08")
-
     elif argument == "-12" or argument == "-hvon":
         commands.append("-12")
     elif argument == "-13" or argument == "-hvoff":
@@ -156,7 +154,9 @@ STxRadiationCounter.init(verbose)
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #Step 4: execute commands
 
+
 for command in commands:
+    if verbose: print("command send:" + command)
     if command == "exit": exit()
     if command == "-00": print(STxRadiationCounter.reset_device_00())
     if command == "-01": print(STxRadiationCounter.start_counter_01())

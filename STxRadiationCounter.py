@@ -31,18 +31,19 @@ Noteworthy dependencies:
 import serial
 import serial.tools.list_ports
 
-SerialPort : serial
+SerialPort : serial.Serial
 
 def init(verbose = False):
     global SerialPort
     if verbose: 
         print("STxUSB started, searching port:")
     
-    ports = serial.tools.list_ports.comports()                          #gets all ports
-    for aPort in ports: 
-        print("found: " + str(aPort.device) + " " + str(aPort.hwid))    #show found portnames and device information
+        ports = serial.tools.list_ports.comports()                          #gets all ports
+        for aPort in ports: 
+            print("found: " + str(aPort.device) + " " + str(aPort.hwid))    #show found portnames and device information
 
-    ports = serial.tools.list_ports.grep("0403:6001")                       #searches for a devise with name, vid,pid containing the argument
+    ports = serial.tools.list_ports.grep("1A86:7523")                       #The arduino test bord.
+    #ports = serial.tools.list_ports.grep("0403:6001")                       #searches for a devise with name, vid,pid containing the argument
 
     no_device_halt = True                                                   #if no port is found, then halt the program
 
@@ -51,12 +52,12 @@ def init(verbose = False):
         if verbose: 
             print("found: " + str(aPort.device) + " " + str(aPort.hwid))    #show found portnames and device information
 
-    if no_device_halt == False:
+    if no_device_halt:
         print("Device not found, check connection, and try again.")         #show error message and halt
         exit()
                  
                                                                             #get serial object to start communicating with last aPort found
-    SerialPort = serial(port = aPort.device, baudrate = 115200, bytesize = 8, parity = "N", stopbits = 1,timeout = None, xonxoff = False, rtscts = False, write_timeout = None, dsrdtr = False, inter_byte_timeout = None, exclusive = None)
+    SerialPort = serial.Serial(port = aPort.device, baudrate = 115200, bytesize = 8, parity = "N", stopbits = 1,timeout = None, xonxoff = False, rtscts = False, write_timeout = None, dsrdtr = False, inter_byte_timeout = None, exclusive = None)
 
 
 def send_command(command :str) -> str:
